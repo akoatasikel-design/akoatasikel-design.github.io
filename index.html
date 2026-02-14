@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine's Surprise</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to right, #ffc1cc, #ffdde1);
+  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  position: relative;
+}
+
+/* Photo rain (9:16 aspect ratio) */
+.flower {
+  position: absolute;
+  width: 50px;        /* width of falling photo */
+  height: 50 * 16 / 9 + 'px'; /* 9:16 height */
+  background-image: url('photo.jpg'); /* your image */
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+  opacity: 0.9;
+  animation-name: fall;
+  animation-timing-function: linear;
+}
+
+@keyframes fall {
+  to { transform: translateY(100vh) rotate(360deg); opacity: 0.5; }
+}
+
+/* Main container */
+.container {
+  text-align: center;
+  background: rgba(255,255,255,0.9);
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  width: 350px;
+  max-width: 90%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+h1 {
+  color: #e63946;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+#message {
+  font-size: 20px;
+  color: #e63946;
+  margin-bottom: 20px;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+/* Buttons in center */
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 10;
+}
+
+button {
+  padding: 12px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+#yesBtn {
+  background-color: #e63946;
+  color: white;
+}
+
+#noBtn {
+  background-color: #f1f1f1;
+  color: #e63946;
+}
+
+/* Photos - appear only after Yes clicked */
+.photos {
+  display: none;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+.photos img {
+  width: 100px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Do you love me?</h1>
+  <p id="message"></p>
+
+  <!-- Buttons -->
+  <div class="buttons">
+    <button id="yesBtn">Yes ❤️</button>
+    <button id="noBtn">No 💔</button>
+  </div>
+
+  <!-- Photos -->
+  <div class="photos" id="photos">
+    <img src="photo1.jpg.jpg" alt="Us 1">
+    <img src="photo2.jpg" alt="Us 2">
+    <img src="photo3.jpg" alt="Us 3">
+  </div>
+</div>
+
+<script>
+const yesBtn = document.getElementById('yesBtn');
+const noBtn = document.getElementById('noBtn');
+const message = document.getElementById('message');
+const photos = document.getElementById('photos');
+
+// Dramatic "No" button escape
+noBtn.addEventListener('mouseover', () => {
+    const container = document.querySelector('.container');
+    const containerRect = container.getBoundingClientRect();
+
+    const maxX = containerRect.width - noBtn.offsetWidth;
+    const maxY = containerRect.height - noBtn.offsetHeight;
+
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
+
+    noBtn.style.transition = 'transform 0.5s ease-out';
+    noBtn.style.transform = `translate(${newX - noBtn.offsetLeft}px, ${newY - noBtn.offsetTop}px)`;
+});
+
+// Yes button click
+yesBtn.addEventListener('click', () => {
+    // Fade out buttons
+    yesBtn.style.transition = 'opacity 0.5s ease';
+    noBtn.style.transition = 'opacity 0.5s ease';
+    yesBtn.style.opacity = 0;
+    noBtn.style.opacity = 0;
+
+    message.textContent = 'Happy Valentines Day, my love! ❤️';
+    message.style.opacity = 1;
+
+    // Show photos
+    photos.style.display = 'flex';
+    const imgs = photos.querySelectorAll('img');
+    imgs.forEach((img, i) => {
+        setTimeout(() => {
+            img.style.opacity = 1;
+            img.style.transform = 'scale(1)';
+        }, i * 200);
+    });
+});
+
+// Photo rain (9:16, bigger, slower)
+function createFlower() {
+    const flower = document.createElement('div');
+    flower.classList.add('flower');
+    flower.style.left = Math.random() * window.innerWidth + 'px';
+    const width = 50 + Math.random() * 40; // width 50-90px
+    flower.style.width = width + 'px';
+    flower.style.height = (width * 16 / 9) + 'px'; // 9:16 height
+    flower.style.animationDuration = 6 + Math.random() * 4 + 's'; // fall speed
+    flower.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(flower);
+    setTimeout(() => flower.remove(), 12000);
+}
+setInterval(createFlower, 250);
+</script>
+
+</body>
+</html>
